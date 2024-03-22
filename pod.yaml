@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-server-sidecar-primary
+  namespace: sidecar
+  labels:
+    run: security-server-sidecar-primary
+    role: primary
+spec:
+   volumes:
+   - name: config-volume
+     persistentVolumeClaim:
+       claimName: pvc-config-sidecar
+   - name: secret-ssh-sidecar
+     secret:
+       secretName: secret-ssh-keys
+       items:
+       - key: public-key
+         path: id_rsa.pub
+         mode: 0644
+   containers:
+   - name: security-server-sidecar-primary-container
+     image: niis/xroad-security-server-sidecar:<version primary>
+     imagePullPolicy: "Always"
+     volumeMounts:
+     - name: config-volume
+       mountPath: /etc/xroad/
+     - name: secret-ssh-sidecar
+       mountPath: "/etc/.ssh/"
+     envFrom:
+     - secretRef:
+         name: secret-sidecar-variables
+     ports:
+     - containerPort: 4000
+     - containerPort: 5588
+     - containerPort: 22

@@ -1,0 +1,3 @@
+sudo kubectl port-forward security-server-sidecar-secondary-7764f94f86-vpqb9 4000:4000 -n sidecar
+
+security funcionando no cluster-kind
